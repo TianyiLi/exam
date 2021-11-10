@@ -37,7 +37,7 @@ export const Config = ({
           {(form) => {
             return form.getFieldValue(['timeLimit']) ? (
               <Form.Item name={['timeSetup']}>
-                <Input type="number" placeholder="秒" />
+                <Input type="number" placeholder="分" />
               </Form.Item>
             ) : null
           }}

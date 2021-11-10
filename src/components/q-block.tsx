@@ -49,7 +49,7 @@ interface ITestForm {
 export const TestForm = ({ onFinish, config, qList }: ITestForm) => {
   const [form] = useForm()
   const time = useMemo(() => {
-    const timeCount = Date.now() + (+config.timeSetup! * 1000);
+    const timeCount = Date.now() + (+config.timeSetup! * 60 * 1000);
     console.log(config.timeSetup?.valueOf())
     return timeCount
   }, [config.timeSetup!])
