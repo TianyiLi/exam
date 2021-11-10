@@ -1,0 +1,12 @@
+
+
+.limit-width {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ant-checkbox-group {
+  display: flex;
+  flex-direction: column;
+}
