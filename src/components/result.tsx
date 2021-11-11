@@ -8,18 +8,18 @@ interface IProps {
 
 export const ResultCom = (props: IProps) => {
   const { ans, ansMapping, reset } = props;
-  console.log(ans);
-  const resultList = Object.entries(ans)
-    .filter(([key, ans]) => {
-      return ansMapping.get(key)?.answer.join("") !== ans.join("");
-    })
-    .map((ele) => ({ source: ansMapping.get(ele[0])!, ans: ele[1] }));
+  const resultList = Object.entries(ans).map((ele) => ({
+    source: ansMapping.get(ele[0])!,
+    ans: ele[1],
+    correct: ansMapping.get(ele[0])?.answer.join("") === ele[1].join(""),
+  }));
 
+  const errorAmount = resultList.filter((ele) => !ele.correct);
   return (
     <Result
-      status={resultList.length ? "warning" : "success"}
+      status={errorAmount.length ? "warning" : "success"}
       extra={
-        !resultList.length ? (
+        !errorAmount.length ? (
           <Button onClick={() => reset(false)}>reset</Button>
         ) : (
           <Button
@@ -31,18 +31,23 @@ export const ResultCom = (props: IProps) => {
           </Button>
         )
       }
-      title={resultList.length ? `${resultList.length} 錯誤` : "全對"}
+      title={errorAmount.length ? `${errorAmount.length} 錯誤` : "全對"}
     >
       <List
         itemLayout="horizontal"
-        dataSource={resultList}
+        dataSource={resultList.sort((a, b) => +a.correct - +b.correct)}
         renderItem={(ele) => (
           <List.Item>
             <List.Item.Meta
               title={
                 <div>
                   <span>{ele.source.id}.</span>
-                  <span style={{ color: "red", margin: "0 10px" }}>
+                  <span
+                    style={{
+                      color: ele.correct ? "green" : "red",
+                      margin: "0 10px",
+                    }}
+                  >
                     ({ele.source.answer})
                   </span>
                   <span>{ele.source.question.origin}</span>
@@ -52,9 +57,19 @@ export const ResultCom = (props: IProps) => {
               }
               description={
                 <pre>
-                  {ele.source.options
-                    .map((ele) => `${ele.value}: ${ele.label}`)
-                    .join("\n")}
+                  {ele.source.options.map((opt) => {
+                    const str = `${opt.value}: ${opt.label}`;
+                    if (ele.ans.includes(opt.value) && ele.correct)
+                      return <div style={{ color: "green" }}>{str}</div>;
+                    if (
+                      ele.ans.includes(opt.value) &&
+                      ele.source.answer.includes(opt.value)
+                    )
+                      return <div style={{ color: "green" }}>{str}</div>;
+                    if (ele.ans.includes(opt.value))
+                      return <div style={{ color: "red" }}>{str}</div>;
+                    else return <div>{str}</div>;
+                  })}
                 </pre>
               }
             />
