@@ -12,6 +12,7 @@ declare module 'data.json' {
 declare type QConfig = {
   id: string
   answer: string[]
+  lastAnswer?: string[]
   question: {
     text: string
     comment: string
